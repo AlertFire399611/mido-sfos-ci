@@ -8,12 +8,9 @@ on:
         required: true
         default: "mido"
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    #if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
       - name: Checkout repository
@@ -28,15 +25,13 @@ jobs:
           sudo docker cp . sailfish-sdk:/workspace
       - name: Run build inside Docker
         run: |
-          sudo docker exec sailfish-sdk sh -c "cd /workspace && source ./mido.env && sudo bash ./run-mic.sh"
+          sudo docker exec sailfish-sdk sh -c "cd /workspace && source ./mido.env && bash ./run-mic.sh"
       - name: List files in Docker container
         run: |
-          sudo docker exec sailfish-sdk ls -R /workspace  # List files recursively to verify output location
+          sudo docker exec sailfish-sdk ls -R /workspace
       - name: Archive artifacts
         run: |
-          # Check the output directory inside Docker and then copy it
           sudo docker exec sailfish-sdk ls /workspace/sfe-mido-5.0.0.62-devel/
-          # Adjust the path based on the output of the previous step
           sudo mkdir -p /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
           sudo docker cp sailfish-sdk:/workspace/sfe-mido-5.0.0.71-devel/sailfishos-mido-release-5.0.0.71-devel.zip /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
       - name: Upload artifacts
@@ -52,7 +47,6 @@ jobs:
 
       - name: Upload image to Release
         uses: ncipollo/release-action@main
-        #if: steps.compile.outputs.status == 'success' && !cancelled()
         with:
           tag: mido
           artifacts: /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/*.zip
