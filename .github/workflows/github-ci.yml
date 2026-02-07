@@ -23,6 +23,9 @@ jobs:
       - name: Copy files into Docker container
         run: |
           docker cp . sailfish-sdk:/workspace
+      - name: Configure sudoers for non-interactive build
+        run: |
+          docker exec sailfish-sdk sh -c "echo 'root ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/root-nopasswd && chmod 0440 /etc/sudoers.d/root-nopasswd"
       - name: Run build inside Docker
         run: |
           docker exec sailfish-sdk sh -c "cd /workspace && source ./mido.env && bash ./run-mic.sh"
