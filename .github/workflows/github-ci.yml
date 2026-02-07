@@ -18,22 +18,22 @@ jobs:
 
       - name: Set up Docker container
         run: |
-          sudo docker pull coderus/sailfishos-platform-sdk-base:latest
-          sudo docker run --privileged --name sailfish-sdk -d coderus/sailfishos-platform-sdk-base:latest tail -f /dev/null
+          docker pull coderus/sailfishos-platform-sdk-base:latest
+          docker run --privileged --name sailfish-sdk -d coderus/sailfishos-platform-sdk-base:latest tail -f /dev/null
       - name: Copy files into Docker container
         run: |
-          sudo docker cp . sailfish-sdk:/workspace
+          docker cp . sailfish-sdk:/workspace
       - name: Run build inside Docker
         run: |
-          sudo docker exec sailfish-sdk sh -c "cd /workspace && source ./mido.env && bash ./run-mic.sh"
+          docker exec sailfish-sdk sh -c "cd /workspace && source ./mido.env && bash ./run-mic.sh"
       - name: List files in Docker container
         run: |
-          sudo docker exec sailfish-sdk ls -R /workspace
+          docker exec sailfish-sdk ls -R /workspace
       - name: Archive artifacts
         run: |
-          sudo docker exec sailfish-sdk ls /workspace/sfe-mido-5.0.0.62-devel/
-          sudo mkdir -p /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
-          sudo docker cp sailfish-sdk:/workspace/sfe-mido-5.0.0.71-devel/sailfishos-mido-release-5.0.0.71-devel.zip /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
+          docker exec sailfish-sdk ls /workspace/sfe-mido-5.0.0.62-devel/
+          mkdir -p /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
+          docker cp sailfish-sdk:/workspace/sfe-mido-5.0.0.71-devel/sailfishos-mido-release-5.0.0.71-devel.zip /home/runner/work/mido-sfos-ci/mido-sfos-ci/artifacts/
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -42,8 +42,8 @@ jobs:
 
       - name: Cleanup
         run: |
-          sudo docker stop sailfish-sdk
-          sudo docker rm sailfish-sdk
+          docker stop sailfish-sdk
+          docker rm sailfish-sdk
 
       - name: Upload image to Release
         uses: ncipollo/release-action@main
